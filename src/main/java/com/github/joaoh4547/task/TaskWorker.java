@@ -1,6 +1,8 @@
 package com.github.joaoh4547.task;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -28,7 +30,7 @@ public class TaskWorker {
 
     private void configExecutor() {
 
-       executor = Executors.newSingleThreadExecutor(new NamedThreadFactory(getThreadName()));
+        executor = Executors.newSingleThreadExecutor(new NamedThreadFactory(getThreadName()));
     }
 
     private String getThreadName() {
@@ -51,7 +53,7 @@ public class TaskWorker {
                     break;
                 }
             }
-        }).cancel();
+        });
     }
 
 

@@ -36,7 +36,7 @@ public class Main {
         Task<Object> task6 = new Task<>(Main::runAction);
 
 //        Thread.sleep(30000);
-        TaskManager.addTask(TaskContext.IMPORTING_DATA, task3, task4, task5, task6);
+//        TaskManager.addTask(TaskContext.IMPORTING_DATA, task3, task4, task5, task6);
     }
 
     private static synchronized TaskResult<Object> runAction() {

@@ -10,14 +10,11 @@ public class NotificationFactory {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationFactory.class);
 
     public  static Notification createNotification(NotificationMode mode, Task<?> task){
-        switch (mode){
-            case IN_APP:
-                return new InAppNotification(task);
-            case MAIL:
-                return new MailNotification();
-            default:
-                throw new IllegalArgumentException("Unsupported notification mode: " + mode);
-        }
+        return switch (mode) {
+            case IN_APP -> new InAppNotification(task);
+            case MAIL -> new MailNotification(task);
+            default -> throw new IllegalArgumentException("Unsupported notification mode: " + mode);
+        };
     }
 
     public enum NotificationMode{

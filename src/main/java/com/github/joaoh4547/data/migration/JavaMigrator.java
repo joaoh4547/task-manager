@@ -8,11 +8,7 @@ public abstract class JavaMigrator extends AbstractMigrator {
 
     @Override
     public String getName() {
-        return getClass().getSimpleName().toUpperCase();
+        return getClass().getName();
     }
-
-    @Override
-    public boolean isAlreadyMigrated() {
-        return false;
-    }
+    
 }

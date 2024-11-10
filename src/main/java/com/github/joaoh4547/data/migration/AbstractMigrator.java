@@ -33,6 +33,11 @@ public abstract class AbstractMigrator implements Migrator {
                 insertMigration(connection, status);
             }
         }
+
+        if (migrated) {
+            LOG.info("Migration {} was successful", this);
+        }
+
         return migrated;
     }
 
@@ -107,5 +112,10 @@ public abstract class AbstractMigrator implements Migrator {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

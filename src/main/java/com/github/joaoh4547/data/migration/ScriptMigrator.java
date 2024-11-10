@@ -43,8 +43,12 @@ public class ScriptMigrator extends AbstractMigrator {
                 }
                 sqlBuilder.append(line);
                 if (line.trim().endsWith(";")) {
+
+                    String sql = sqlBuilder.toString().trim();
+                    sql = sql.substring(0, sql.length() - 1);  // Remover o ';' final
+
+
                     try (Statement statement = connection.createStatement()) {
-                        String sql = sqlBuilder.toString();
                         statement.execute(sql);
                     }
                     sqlBuilder.setLength(0);
@@ -57,4 +61,8 @@ public class ScriptMigrator extends AbstractMigrator {
     }
 
 
+    @Override
+    public String toString() {
+        return migratedFile.getName();
+    }
 }

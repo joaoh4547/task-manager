@@ -4,6 +4,7 @@ import com.google.common.reflect.ClassPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ public class ReflectionUtils {
 
     public static <T> T newInstance(Class<T> clazz) {
         try {
-            return clazz.getDeclaredConstructor().newInstance();
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
         } catch (Exception e) {
             LOG.error("Error creating instance of {}", clazz.getName(), e);
             throw new RuntimeException(e);
@@ -62,7 +65,7 @@ public class ReflectionUtils {
     }
 
     public static <T, R> boolean isSubtypeOf(Class<T> clazz, Class<R> clazz2) {
-        return clazz.isAssignableFrom(clazz2);
+        return clazz2.isAssignableFrom(clazz);
     }
 
     public static Method getDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
@@ -95,7 +98,7 @@ public class ReflectionUtils {
 
     public static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass, boolean includeAbstract) {
         Collection<Class<T>> classes = getSubclasses(targetClass);
-        if (includeAbstract) {
+        if (!includeAbstract) {
             classes.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
         }
         return classes;

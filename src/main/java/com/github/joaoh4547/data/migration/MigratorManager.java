@@ -1,6 +1,7 @@
 package com.github.joaoh4547.data.migration;
 
 import com.github.joaoh4547.data.DatabaseManager;
+import com.github.joaoh4547.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,27 +57,36 @@ public class MigratorManager {
                         });
             }
 
-            files.forEach(file -> {
-                LOG.info("Migration file {}", file.getName());
-            });
-
 
             for (File file : files) {
                 migrators.add(new ScriptMigrator(file));
             }
 
+            ReflectionUtils.getSubclasses(JavaMigrator.class, false).forEach(c -> {
+                JavaMigrator migrator = ReflectionUtils.newInstance(c);
+                migrators.add(migrator);
+            });
+
             Collection<Migrator> fitered = migrators.stream()
-                    .filter(Migrator::isAlreadyMigrated)
+                    .filter(m -> !m.isAlreadyMigrated())
                     .sorted(Comparator.nullsLast(Comparator.comparing(Migrator::getName)))
                     .toList();
 
 
+            LOG.info("Migrations to migrate [{}]", String.join(", ", fitered.stream().map(Migrator::toString).toList()));
+
+
+            boolean successMigrate = true;
             for (Migrator m : fitered) {
                 boolean migrated = m.migrate(connection);
                 if (!migrated) {
                     LOG.info("Migration failed");
+                    successMigrate = false;
                     break;
                 }
+            }
+            if (successMigrate) {
+                LOG.info("Migrations completed");
             }
         } catch (Exception e) {
             throw new MigrationException(e.getMessage(), e);

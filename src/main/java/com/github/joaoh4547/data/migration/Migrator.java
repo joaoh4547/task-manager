@@ -32,9 +32,27 @@ public interface Migrator {
     String getName();
 
 
+    /**
+     * Inserts a migration record into the database with the provided connection and migration status.
+     *
+     * @param connection the connection to the database
+     * @param status the migration status to be inserted
+     */
     void insertMigration(Connection connection, MigrationStatus status);
 
+    /**
+     * Updates the status of a migration in the database.
+     *
+     * @param connection the connection to the database
+     * @param status the MigrationStatus to be updated
+     */
     void updateStatus(Connection connection, MigrationStatus status);
 
+    /**
+     * Checks if a migration record already exists in the database for the current Migrator instance.
+     *
+     * @param connection the connection to the database for performing the check
+     * @return true if a migration record with the same name exists, false otherwise
+     */
     boolean existsMigration(Connection connection);
 }

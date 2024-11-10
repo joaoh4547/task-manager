@@ -1,11 +1,11 @@
 package com.github.joaoh4547.utils;
 
 import com.google.common.reflect.ClassPath;
-import org.apache.commons.beanutils.ContextClassLoaderLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -41,7 +41,6 @@ public class ReflectionUtils {
         }
         ALL_CLASS = allClass;
     }
-
 
 
     public static <T> T newInstance(Class<T> clazz) {
@@ -84,7 +83,7 @@ public class ReflectionUtils {
         }
     }
 
-   private static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass) {
+    private static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass) {
         Collection<Class<T>> subclasses = new ArrayList<>();
         for (Class<?> clazz : ALL_CLASS) {
             if (isSubtypeOf(clazz, targetClass)) {
@@ -92,7 +91,15 @@ public class ReflectionUtils {
             }
         }
         return subclasses;
+    }
 
-   }
+    public static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass, boolean includeAbstract) {
+        Collection<Class<T>> classes = getSubclasses(targetClass);
+        if (includeAbstract) {
+            classes.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
+        }
+        return classes;
+    }
+
 
 }

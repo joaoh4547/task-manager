@@ -1,9 +1,11 @@
 package com.github.joaoh4547.task.event;
 
-//import com.github.joaoh4547.task.notification.NotificationListener;
 
 import com.github.joaoh4547.task.Task;
 
+/**
+ * Represents an event related to a task, such as its type and the task itself.
+ */
 public record TaskEvent(TaskEventType type, Task<?> task) {
 
 

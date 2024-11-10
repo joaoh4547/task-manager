@@ -10,7 +10,7 @@ public class Application extends AbstractInitializer {
      * This method starts the application by initializing the database and executing the main logic.
      */
     void start() {
-        initDatabase();
+        onInitialize();
         run();
     }
 

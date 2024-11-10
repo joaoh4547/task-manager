@@ -1,14 +1,21 @@
 package com.github.joaoh4547;
 
 import com.github.joaoh4547.data.DataBaseContext;
+import com.github.joaoh4547.data.migration.MigratorManager;
 import com.github.joaoh4547.utils.Bundler;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
 
 /**
  * A class that defines the initialization process for the application.
  * It implements the Initializer interface, providing a method to initialize the application components.
  */
 public class AbstractInitializer implements Initializer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
 
     /**
      * Represents the bundle key used for obtaining database configuration values.
@@ -19,6 +26,9 @@ public class AbstractInitializer implements Initializer {
     @Override
     public void onInitialize() {
         initDatabase();
+        if (isRunMigrations()) {
+            new MigratorManager().runMigrations();
+        }
     }
 
     /**
@@ -27,11 +37,21 @@ public class AbstractInitializer implements Initializer {
      * Sets the initialized DataSource in the DataBaseContext for future database operations.
      */
     protected void initDatabase() {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl(Bundler.getValue("database.url", DATABASE_BUNDLE));
-        ds.setUsername(Bundler.getValue("database.user", DATABASE_BUNDLE));
-        ds.setPassword(Bundler.getValue("database.password", DATABASE_BUNDLE));
-        DataBaseContext.setDataSource(ds);
+        try {
+            HikariDataSource ds = new HikariDataSource();
+            ds.setJdbcUrl(Bundler.getValue("database.url", DATABASE_BUNDLE));
+            ds.setUsername(Bundler.getValue("database.user", DATABASE_BUNDLE));
+            ds.setPassword(Bundler.getValue("database.password", DATABASE_BUNDLE));
+            ds.setMaximumPoolSize(10);
+            ds.setConnectionTimeout(30000);
+            ds.setConnectionTestQuery("SELECT 1 from dual");
+            DataBaseContext.setDataSource(ds);
+            Connection c = ds.getConnection();
+            c.close();
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+
     }
 
     /**
@@ -39,7 +59,7 @@ public class AbstractInitializer implements Initializer {
      *
      * @return true if migrations should be run, false otherwise
      */
-    protected boolean isRunMigrations(){
+    protected boolean isRunMigrations() {
         return true;
     }
 }

@@ -14,9 +14,8 @@ public interface Migrator {
      * Migrates data in a database using the provided Connection.
      *
      * @param connection the connection to the database
-     * @throws SQLException if a database error occurs during migration
      */
-    void migrate(Connection connection) throws SQLException;
+    boolean migrate(Connection connection);
 
     /**
      * Checks if the data has already been migrated.
@@ -25,4 +24,17 @@ public interface Migrator {
      */
     boolean isAlreadyMigrated();
 
+    /**
+     * Retrieves the name of the migrator.
+     *
+     * @return the name of the migrator
+     */
+    String getName();
+
+
+    void insertMigration(Connection connection, MigrationStatus status);
+
+    void updateStatus(Connection connection, MigrationStatus status);
+
+    boolean existsMigration(Connection connection);
 }

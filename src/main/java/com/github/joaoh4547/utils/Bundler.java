@@ -21,7 +21,26 @@ public class Bundler {
      * @return the value associated with the given key in the specified bundle
      */
     public static String getValue(String key, String bundle) {
-        return getBundle(bundle).getString(key);
+        return resolveEnvironmentVariable(getBundle(bundle).getString(key));
+    }
+
+    /**
+     * Resolves environment variables in the input string by replacing them with their corresponding values from the system environment variables.
+     *
+     * @param value the input string possibly containing environment variables in the format ${VARIABLE_NAME}
+     * @return the input string with environment variables replaced with their corresponding values from the system environment variables
+     */
+    private static String resolveEnvironmentVariable(String value) {
+        if (value != null && value.contains("${")) {
+            String envVar = value.substring(value.indexOf("${") + 2, value.indexOf("}"));
+
+            String envValue = System.getenv(envVar);
+
+            if (envValue != null) {
+                return value.replace("${" + envVar + "}", envValue);
+            }
+        }
+        return value;
     }
 
     /**
@@ -67,4 +86,6 @@ public class Bundler {
     private static ResourceBundle getBundle(String name) {
         return ResourceBundle.getBundle(name);
     }
+
+
 }

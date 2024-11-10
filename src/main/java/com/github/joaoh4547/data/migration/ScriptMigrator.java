@@ -1,17 +1,16 @@
 package com.github.joaoh4547.data.migration;
 
-import com.github.joaoh4547.data.DatabaseManager;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Class ScriptMigrator implements the Migrator interface and provides migration functionality for scripts.
  */
-public class ScriptMigrator implements Migrator {
+public class ScriptMigrator extends AbstractMigrator {
 
 
     /**
@@ -28,26 +27,34 @@ public class ScriptMigrator implements Migrator {
 
 
     @Override
-    public void migrate(Connection connection) throws SQLException {
-
+    public String getName() {
+        return migratedFile.getName().substring(0, migratedFile.getName().lastIndexOf('.'));
     }
 
     @Override
-    public boolean isAlreadyMigrated() {
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DatabaseManager.getConnection();
-            statement = connection.prepareStatement("SELECT * FROM " + MIGRATION_TABLE + " WHERE MIGRATION_NAME =? AND MIGRATION_STATUS IN (?,?)");
-            statement.setString(1, this.migratedFile.getName());
-            statement.setInt(2, MigrationStatus.ERROR.getCode());
-            statement.setInt(3, MigrationStatus.PENDING.getCode());
-            resultSet = statement.executeQuery();
-            return resultSet.next();
-        } catch (SQLException ignored) {
+    protected void doMigrate(Connection connection) throws SQLException {
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(migratedFile))) {
+            StringBuilder sqlBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty() || line.trim().startsWith("--")) {
+                    continue;
+                }
+                sqlBuilder.append(line);
+                if (line.trim().endsWith(";")) {
+                    try (Statement statement = connection.createStatement()) {
+                        String sql = sqlBuilder.toString();
+                        statement.execute(sql);
+                    }
+                    sqlBuilder.setLength(0);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return false;
     }
+
+
 }

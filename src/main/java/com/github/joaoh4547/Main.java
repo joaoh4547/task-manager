@@ -17,11 +17,7 @@ public class Main {
             void run() {
                 System.out.println("Hello World!");
             }
-
-            @Override
-            protected boolean isRunMigrations() {
-                return false;
-            }
+            
         };
 
         app.start();

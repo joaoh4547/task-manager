@@ -1,17 +1,30 @@
 package com.github.joaoh4547.data.migration;
 
-import com.github.joaoh4547.data.DataBaseContext;
 import com.github.joaoh4547.data.DatabaseManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * The MigratorManager class provides functionality to manage database migrations.
  * It allows running migrations and creating the migration table if it does not exist.
  */
 public class MigratorManager {
+
+
+    private static final Logger LOG = LoggerFactory.getLogger(MigratorManager.class);
 
     /**
      * Constant representing the name of the migration table in the database.
@@ -30,6 +43,40 @@ public class MigratorManager {
             Connection connection = DatabaseManager.getConnection();
             if (!isTableExists(connection)) {
                 createMigrationTable(connection);
+            }
+
+            Collection<Migrator> migrators = new ArrayList<>();
+
+            Collection<File> files = new ArrayList<>();
+            Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("scripts")).toURI());
+            try (Stream<Path> paths = Files.walk(path, 1)) {
+                paths.filter(Files::isRegularFile)
+                        .forEach(filePath -> {
+                            files.add(filePath.toFile());
+                        });
+            }
+
+            files.forEach(file -> {
+                LOG.info("Migration file {}", file.getName());
+            });
+
+
+            for (File file : files) {
+                migrators.add(new ScriptMigrator(file));
+            }
+
+            Collection<Migrator> fitered = migrators.stream()
+                    .filter(Migrator::isAlreadyMigrated)
+                    .sorted(Comparator.nullsLast(Comparator.comparing(Migrator::getName)))
+                    .toList();
+
+
+            for (Migrator m : fitered) {
+                boolean migrated = m.migrate(connection);
+                if (!migrated) {
+                    LOG.info("Migration failed");
+                    break;
+                }
             }
         } catch (Exception e) {
             throw new MigrationException(e.getMessage(), e);

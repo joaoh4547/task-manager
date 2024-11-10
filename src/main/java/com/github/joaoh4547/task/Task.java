@@ -3,7 +3,6 @@ package com.github.joaoh4547.task;
 //import com.github.joaoh4547.task.notification.TaskNotificator;
 
 import com.github.joaoh4547.task.event.TaskEventEmitter;
-import com.github.joaoh4547.data.entities.Process;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Optional;
 public class Task<T> {
 
     private final Integer taskId;
-    private final Process<T> process;
 
     private List<Action> beforeActions = new ArrayList<>();
     private List<Action> afterActions = new ArrayList<>();
@@ -23,9 +21,7 @@ public class Task<T> {
 
     private final TaskAction<T> action;
 
-    public Task(Process<T> process, TaskAction<T> action) {
-        this.process = process;
-        this.process.setTask(this);
+    public Task(TaskAction<T> action) {
         this.taskId = TaskKeyGenerator.getTaskId();
         this.action = action;
     }
@@ -72,7 +68,7 @@ public class Task<T> {
     public TaskResult<T> execute() {
         TaskResult<T> result = null;
         try {
-            if(getEventEmitter().isPresent()) {
+            if (getEventEmitter().isPresent()) {
                 TaskEventEmitter emitter = getEventEmitter().get();
 
             }

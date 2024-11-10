@@ -1,4 +1,4 @@
-package com.github.joaoh4547;
+package com.github.joaoh4547.utils;
 
 import java.util.ResourceBundle;
 

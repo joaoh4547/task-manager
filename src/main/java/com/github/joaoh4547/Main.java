@@ -2,11 +2,9 @@ package com.github.joaoh4547;
 
 
 import com.github.joaoh4547.task.Task;
-import com.github.joaoh4547.task.TaskContext;
+import com.github.joaoh4547.task.TaskBuilder;
 import com.github.joaoh4547.task.TaskManager;
 import com.github.joaoh4547.task.TaskResult;
-import com.github.joaoh4547.task.notification.mail.Mail;
-import com.github.joaoh4547.task.notification.mail.MailSender;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +19,6 @@ public class Main {
     }
 
 
-
     private static void makeTasks() {
         Task<Object> task = new Task<>(Main::runAction);
         Task<Object> task2 = new Task<>(Main::runAction);
@@ -34,6 +31,12 @@ public class Main {
         Task<Object> task4 = new Task<>(Main::runAction);
         Task<Object> task5 = new Task<>(() -> null);
         Task<Object> task6 = new Task<>(Main::runAction);
+
+
+        TaskBuilder<Integer> builder = TaskBuilder.builder();
+
+        builder.build();
+
 
 //        Thread.sleep(30000);
 //        TaskManager.addTask(TaskContext.IMPORTING_DATA, task3, task4, task5, task6);

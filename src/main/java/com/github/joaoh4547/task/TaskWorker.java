@@ -15,6 +15,8 @@ public class TaskWorker {
     private final TaskContext context;
 
     private final BlockingQueue<SubWorker<?>> fila = new LinkedBlockingQueue<>();
+
+
     private ExecutorService executor;
     private final Lock lock = new ReentrantLock();
     private final Condition novaTarefaAdicionada = lock.newCondition();
@@ -28,10 +30,11 @@ public class TaskWorker {
         configProcess();
     }
 
-    private void configExecutor() {
 
+    private void configExecutor() {
         executor = Executors.newSingleThreadExecutor(new NamedThreadFactory(getThreadName()));
     }
+
 
     private String getThreadName() {
         return "TaskWorker-" + context.getProcessName() + "-" + workerId;
@@ -41,7 +44,7 @@ public class TaskWorker {
         executor.submit(() -> {
             while (true) {
                 try {
-                    SubWorker<?> tarefa = fila.poll(1, TimeUnit.SECONDS); // Aguarda por uma tarefa por até 1 segundo
+                    SubWorker<?> tarefa = getSubWorker();
                     if (tarefa != null) {
                         tarefa.doWork();
                     } else {
@@ -73,8 +76,10 @@ public class TaskWorker {
         SubWorker<T> worker = new SubWorker<>(registry);
 
         try {
-            fila.offer(worker);
-//            TaskNotificator.getInstance().addNotification();
+            boolean added = fila.offer(worker);
+            if (added) {
+                System.out.println("Added worker " + worker);
+            }
             if (!executando) {
                 novaTarefaAdicionada.signal();
             }
@@ -84,9 +89,6 @@ public class TaskWorker {
 
     }
 
-//    private TaskNotification createNotification(){
-//
-//    }
 
     private void pausarExecucao() {
         lock.lock();

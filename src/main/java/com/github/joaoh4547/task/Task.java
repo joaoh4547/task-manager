@@ -1,23 +1,31 @@
 package com.github.joaoh4547.task;
 
-import com.github.joaoh4547.task.notification.TaskNotificator;
+//import com.github.joaoh4547.task.notification.TaskNotificator;
+
+import com.github.joaoh4547.task.event.TaskEventEmitter;
+import com.github.joaoh4547.data.entities.Process;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Task<T> {
 
     private final Integer taskId;
+    private final Process<T> process;
 
-    private final List<Action> beforeActions = new ArrayList<>();
-    private final List<Action> afterActions = new ArrayList<>();
-    private final ActionErrorHandler errorHandler = TaskError::new;
+    private List<Action> beforeActions = new ArrayList<>();
+    private List<Action> afterActions = new ArrayList<>();
+    private ActionErrorHandler errorHandler = TaskError::new;
+
 
     private TaskContext context;
 
     private final TaskAction<T> action;
 
-    public Task(TaskAction<T> action) {
+    public Task(Process<T> process, TaskAction<T> action) {
+        this.process = process;
+        this.process.setTask(this);
         this.taskId = TaskKeyGenerator.getTaskId();
         this.action = action;
     }
@@ -30,12 +38,45 @@ public class Task<T> {
         afterActions.add(action);
     }
 
+    public List<Action> getAfterActions() {
+        return afterActions;
+    }
+
+    public void setAfterActions(List<Action> afterActions) {
+        this.afterActions = afterActions;
+    }
+
+    public ActionErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ActionErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    public List<Action> getBeforeActions() {
+        return beforeActions;
+    }
+
+    public void setBeforeActions(List<Action> beforeActions) {
+        this.beforeActions = beforeActions;
+    }
+
+    private Optional<TaskEventEmitter> getEventEmitter() {
+        if (context.getEventEmitter() == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(context.getEventEmitter());
+    }
 
     public TaskResult<T> execute() {
         TaskResult<T> result = null;
         try {
+            if(getEventEmitter().isPresent()) {
+                TaskEventEmitter emitter = getEventEmitter().get();
+
+            }
             for (Action beforeAction : beforeActions) {
-//                getTaskNotificator().
                 beforeAction.execute();
             }
             result = action.execute();
@@ -63,9 +104,6 @@ public class Task<T> {
         return taskId;
     }
 
-    private TaskNotificator getTaskNotificator() {
-        return TaskNotificator.getInstance();
-    }
 
     @Override
     public String toString() {

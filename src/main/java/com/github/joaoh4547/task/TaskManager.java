@@ -1,6 +1,9 @@
 package com.github.joaoh4547.task;
 
-import com.github.joaoh4547.Bundler;
+import com.github.joaoh4547.utils.Bundler;
+import com.github.joaoh4547.task.event.TaskEventListener;
+import com.github.joaoh4547.task.event.TaskEventListenerStore;
+import com.github.joaoh4547.task.event.TaskEventType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,9 +12,45 @@ import java.util.stream.Stream;
 public class TaskManager {
     private static final Map<TaskContext, Collection<TaskWorker>> taskByContext = new ConcurrentHashMap<>();
 
+    private static final Map<TaskEventType, Collection<TaskEventListener>> listeners = new ConcurrentHashMap<>();
+
+
     static {
         initWorkers();
+        configListeners();
+        registerListeners();
     }
+
+
+
+    private static void configListeners() {
+        addListeners(event -> {
+
+        }, TaskEventType.QUEUED);
+
+        addListeners(event -> {
+
+        }, TaskEventType.RUNNING);
+
+        addListeners(event -> {
+
+        }, TaskEventType.FINISHED);
+
+        addListeners(event -> {
+
+        }, TaskEventType.FINISHED);
+    }
+
+    private static void registerListeners() {
+        listeners.forEach((type, taskEventListeners) -> {
+            taskEventListeners.forEach(listener -> TaskEventListenerStore.getInstance().addTaskEventListener(type, listener));
+        });
+    }
+
+    public static void addListeners(TaskEventListener listener, TaskEventType type) {
+        listeners.computeIfAbsent(type, k -> new ArrayList<>()).add(listener);
+    }
+
 
     private TaskManager() {
     }

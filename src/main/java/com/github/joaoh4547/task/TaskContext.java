@@ -1,18 +1,19 @@
 package com.github.joaoh4547.task;
 
+import com.github.joaoh4547.task.event.TaskEventEmitter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.util.Map;
 
 public class TaskContext {
 
     private final String processName;
     private final Integer workerCount;
 
+    private TaskEventEmitter eventEmitter;
 
 
-    TaskContext(String processName, Integer workerCount) {
+
+    TaskContext(String processName, Integer workerCount, TaskEventEmitter eventEmitter) {
         this.processName = processName;
         this.workerCount = workerCount;
     }
@@ -25,12 +26,28 @@ public class TaskContext {
         return processName;
     }
 
+    public TaskEventEmitter getEventEmitter() {
+        return eventEmitter;
+    }
+
+    public void setEventEmitter(TaskEventEmitter eventEmitter) {
+        this.eventEmitter = eventEmitter;
+    }
+
+    public static TaskContext create(String processName, Integer workerCount, TaskEventEmitter eventEmitter) {
+        return new TaskContext(processName, workerCount, eventEmitter);
+    }
+
+    public static TaskContext create(String processName, TaskEventEmitter eventEmitter) {
+        return new TaskContext(processName, -1, eventEmitter);
+    }
+
     public static TaskContext create(String processName, Integer workerCount) {
-        return new TaskContext(processName, workerCount);
+        return new TaskContext(processName, workerCount, null);
     }
 
     public static TaskContext create(String processName) {
-        return new TaskContext(processName, -1);
+        return new TaskContext(processName, -1, null);
     }
 
     @Override

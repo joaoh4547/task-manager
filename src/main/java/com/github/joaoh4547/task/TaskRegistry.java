@@ -1,5 +1,9 @@
 package com.github.joaoh4547.task;
 
+import com.github.joaoh4547.task.event.TaskEvent;
+import com.github.joaoh4547.task.event.TaskEventEmitter;
+import com.github.joaoh4547.task.event.TaskEventType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,7 +16,9 @@ public class TaskRegistry<T> {
 
     public void addTask(Task<T> task) {
         tasks.add(task);
+        TaskEventEmitter.getInstance().fireEvent(TaskEvent.createTaskEvent(TaskEventType.QUEUED, task));
     }
+
 
     public void addEndListener(TaskExecutionListener<T> listener) {
         this.listeners.add(listener);

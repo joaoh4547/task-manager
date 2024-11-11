@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager;
+package com.github.joaoh4547.taskmanager.db;
 
 import com.zaxxer.hikari.HikariDataSource;
 

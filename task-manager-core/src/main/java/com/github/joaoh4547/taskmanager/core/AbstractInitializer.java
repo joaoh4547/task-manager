@@ -2,9 +2,9 @@ package com.github.joaoh4547.taskmanager.core;
 
 
 
-import com.github.joaoh4547.taskmanager.DataBaseContext;
-import com.github.joaoh4547.taskmanager.core.migration.MigratorManager;
-import com.github.joaoh4547.taskmanager.core.utils.Bundler;
+import com.github.joaoh4547.taskmanager.db.DataBaseContext;
+import com.github.joaoh4547.taskmanager.migration.MigratorManager;
+import com.github.joaoh4547.taskmanager.utils.Bundler;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

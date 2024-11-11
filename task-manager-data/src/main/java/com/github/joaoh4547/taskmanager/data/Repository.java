@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.data;
+package com.github.joaoh4547.taskmanager.data;
 
 /**
  * An interface representing a generic repository for entities.

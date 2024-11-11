@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.utils;
+package com.github.joaoh4547.taskmanager.utils;
 
 import com.google.common.reflect.ClassPath;
 import org.slf4j.Logger;

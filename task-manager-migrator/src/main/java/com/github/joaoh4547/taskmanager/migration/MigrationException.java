@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.migration;
+package com.github.joaoh4547.taskmanager.migration;
 
 /**
  * Custom RuntimeException used to represent exceptions that occur during database migrations.

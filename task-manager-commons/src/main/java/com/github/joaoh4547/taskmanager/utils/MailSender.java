@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.utils;
+package com.github.joaoh4547.taskmanager.utils;
 
 /**
  * Represents a class responsible for sending emails.

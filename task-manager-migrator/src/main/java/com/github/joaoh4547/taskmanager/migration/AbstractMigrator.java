@@ -1,8 +1,8 @@
-package com.github.joaoh4547.taskmanager.core.migration;
+package com.github.joaoh4547.taskmanager.migration;
 
 
-import com.github.joaoh4547.taskmanager.DatabaseManager;
-import com.github.joaoh4547.taskmanager.core.utils.JdbcUtil;
+import com.github.joaoh4547.taskmanager.db.DatabaseManager;
+import com.github.joaoh4547.taskmanager.utils.JdbcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

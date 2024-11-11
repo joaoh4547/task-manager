@@ -4,7 +4,7 @@ import com.github.joaoh4547.taskmanager.core.task.event.TaskEventListener;
 import com.github.joaoh4547.taskmanager.core.task.event.TaskEventType;
 
 import com.github.joaoh4547.taskmanager.core.task.event.TaskEventListenerStore;
-import com.github.joaoh4547.taskmanager.core.utils.Bundler;
+import com.github.joaoh4547.taskmanager.utils.Bundler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.migration;
+package com.github.joaoh4547.taskmanager.migration;
 
 /**
  * Represents the status of a migration process.

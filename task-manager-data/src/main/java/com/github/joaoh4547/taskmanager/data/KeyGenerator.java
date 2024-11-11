@@ -1,6 +1,6 @@
-package com.github.joaoh4547.taskmanager.core.data;
+package com.github.joaoh4547.taskmanager.data;
 
-import com.github.joaoh4547.taskmanager.DataBaseContext;
+import com.github.joaoh4547.taskmanager.db.DataBaseContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

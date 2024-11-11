@@ -2,7 +2,7 @@ package com.github.joaoh4547.taskmanager.core.task;
 
 
 
-import com.github.joaoh4547.taskmanager.core.utils.Builder;
+import com.github.joaoh4547.taskmanager.utils.Builder;
 
 import java.util.ArrayList;
 import java.util.List;

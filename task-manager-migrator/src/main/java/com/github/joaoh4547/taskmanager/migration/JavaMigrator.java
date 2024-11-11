@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.migration;
+package com.github.joaoh4547.taskmanager.migration;
 
 /**
  * This abstract class represents a JavaMigrator that implements the Migrator interface.

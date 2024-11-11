@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.data;
+package com.github.joaoh4547.taskmanager.data;
 
 /**
  * An abstract class that serves as a base class for JDBC repositories.

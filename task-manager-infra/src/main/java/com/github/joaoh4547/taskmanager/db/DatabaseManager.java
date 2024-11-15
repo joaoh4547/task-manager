@@ -15,7 +15,7 @@ public class DatabaseManager {
      *
      * @return the HikariDataSource object representing the data source
      */
-    public HikariDataSource getDataSource() {
+    public static HikariDataSource getDataSource() {
         return DataBaseContext.getDataSource();
     }
 

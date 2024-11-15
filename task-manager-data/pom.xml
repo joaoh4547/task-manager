@@ -28,6 +28,11 @@
             <artifactId>task-manager-infra</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.squigglesql</groupId>
+            <artifactId>squigglesql</artifactId>
+            <version>4.2.1</version>
+        </dependency>
     </dependencies>
 
 </project>

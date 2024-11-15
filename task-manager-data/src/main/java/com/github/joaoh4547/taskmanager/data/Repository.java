@@ -37,12 +37,6 @@ public interface Repository<T, K> {
      */
     void delete(T entity);
 
-    /**
-     * Generates a new key to be used for identifying entities in the repository.
-     *
-     * @return A new key of type K.
-     */
-    K newKey();
 
     /**
      * Checks if an entity with the provided key exists in the repository.

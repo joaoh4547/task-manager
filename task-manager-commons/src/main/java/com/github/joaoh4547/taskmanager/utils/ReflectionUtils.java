@@ -1,9 +1,12 @@
 package com.github.joaoh4547.taskmanager.utils;
 
-import com.google.common.reflect.ClassPath;
+import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -13,34 +16,24 @@ import java.util.Collection;
 public class ReflectionUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReflectionUtils.class);
-    private static Collection<Class<?>> ALL_CLASS;
 
-    static {
-        init();
-    }
 
-    private static void init() {
-        initAllClass();
-    }
+    private static final Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forJavaClassPath()));
 
-    private static void initAllClass() {
-        Collection<Class<?>> allClass = new ArrayList<>();
-        ClassLoader classLoader = Thread.currentThread()
-                .getContextClassLoader();
-        try {
-            Collection<ClassPath.ClassInfo> infos = ClassPath.from(classLoader)
-                    .getTopLevelClasses();
-            for (ClassPath.ClassInfo classInfo : infos) {
-                try {
-                    Class<?> clazz = classInfo.load();
-                    allClass.add(clazz);
-                } catch (Throwable ignore) {
-                }
-            }
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+
+    @SafeVarargs
+    public static Collection<Class<?>> getAllClassWithAnnotation(Class<? extends Annotation>... annotations) {
+        Collection<Class<?>> clazz = new ArrayList<>();
+        for (Class<? extends Annotation> annotation :
+                annotations) {
+            clazz.addAll(getClassWithAnnotation(annotation));
         }
-        ALL_CLASS = allClass;
+        return clazz;
+    }
+
+
+    public static Collection<Class<?>> getClassWithAnnotation(Class<? extends Annotation> annotation) {
+        return reflections.getTypesAnnotatedWith(annotation);
     }
 
 
@@ -86,18 +79,12 @@ public class ReflectionUtils {
         }
     }
 
-    private static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass) {
-        Collection<Class<T>> subclasses = new ArrayList<>();
-        for (Class<?> clazz : ALL_CLASS) {
-            if (isSubtypeOf(clazz, targetClass)) {
-                subclasses.add((Class<T>) clazz);
-            }
-        }
-        return subclasses;
+    private static <T> Collection<Class<? extends T>> getSubclasses(Class<T> targetClass) {
+        return reflections.getSubTypesOf(targetClass);
     }
 
-    public static <T> Collection<Class<T>> getSubclasses(Class<T> targetClass, boolean includeAbstract) {
-        Collection<Class<T>> classes = getSubclasses(targetClass);
+    public static <T> Collection<Class<? extends T>> getSubclasses(Class<T> targetClass, boolean includeAbstract) {
+        Collection<Class<? extends T>> classes = getSubclasses(targetClass);
         if (!includeAbstract) {
             classes.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
         }

@@ -122,6 +122,7 @@ public class TaskManager {
         addTask(TaskContextManager.GENERAL, task, listener);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void addTask(TaskContext context, Collection<Task<T>> tasks) {
         TaskWorker worker = getWorker(context);
         configContextForTasks(context, tasks.toArray(new Task[0]));

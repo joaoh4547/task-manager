@@ -56,10 +56,6 @@ public class MigratorManager {
             Collection<URL> urls;
             Enumeration<URL> urlEnumeration = Thread.currentThread().getContextClassLoader().getResources("scripts");
 
-//            urlEnumeration.nextElement()
-//            if (urlEnumeration.nextElement() != null) {
-//                urls.add(urlEnumeration.nextElement());
-//            }
 
             try (var scan = new ClassGraph().acceptPaths("scripts").scan()) {
                 var resources = scan.getAllResources();
@@ -74,15 +70,6 @@ public class MigratorManager {
                             });
                 }
             }
-
-
-//            Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("scripts")).toURI());
-//            try (Stream<Path> paths = Files.walk(path, 1)) {
-//                paths.filter(Files::isRegularFile)
-//                        .forEach(filePath -> {
-//                            files.add(filePath.toFile());
-//                        });
-//            }
 
 
             for (File file : files) {

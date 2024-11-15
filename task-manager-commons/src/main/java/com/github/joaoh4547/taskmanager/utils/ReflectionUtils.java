@@ -96,9 +96,6 @@ public class ReflectionUtils {
         return classes;
     }
 
-    public static void test() {
-//        Resources.getResource("")
-    }
 
 
 }

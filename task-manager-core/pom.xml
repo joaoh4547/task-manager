@@ -20,11 +20,6 @@
     <dependencies>
         <dependency>
             <groupId>com.github.joaoh4547.taskmanager</groupId>
-            <artifactId>task-manager-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.joaoh4547.taskmanager</groupId>
             <artifactId>task-manager-migrator</artifactId>
             <version>${project.version}</version>
         </dependency>

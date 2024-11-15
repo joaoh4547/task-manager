@@ -1,7 +1,6 @@
 package com.github.joaoh4547.taskmanager.core.task;
 
 
-
 import com.github.joaoh4547.taskmanager.utils.Builder;
 
 import java.util.ArrayList;
@@ -53,8 +52,8 @@ public class TaskBuilder<T> implements Builder<Task<T>> {
 
     @Override
     public Task<T> build() {
-        Task<T> task = new Task<T>(action);
-        task.setContext(context);
+        Task<T> task = null;// new Task<T>(action);
+//        task.setContext(context);
 //        task.
 //        task.
         return task;

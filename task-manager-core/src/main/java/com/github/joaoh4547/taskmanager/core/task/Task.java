@@ -1,7 +1,7 @@
 package com.github.joaoh4547.taskmanager.core.task;
 
-//import com.github.joaoh4547.task.notification.TaskNotificator;
 
+import com.github.joaoh4547.taskmanager.core.process.Process;
 import com.github.joaoh4547.taskmanager.core.task.event.TaskEventEmitter;
 
 import java.util.ArrayList;
@@ -15,15 +15,25 @@ public class Task<T> {
     private List<Action> beforeActions = new ArrayList<>();
     private List<Action> afterActions = new ArrayList<>();
     private ActionErrorHandler errorHandler = TaskError::new;
+    private Process process = new Process();
 
+    private String taskName;
 
     private TaskContext context;
 
     private final TaskAction<T> action;
 
-    public Task(TaskAction<T> action) {
+    public Task(TaskAction<T> action, String taskName) {
         this.taskId = TaskKeyGenerator.getTaskId();
         this.action = action;
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
     public void addBeforeAction(Action action) {
@@ -79,7 +89,8 @@ public class Task<T> {
             for (Action afterAction : afterActions) {
                 afterAction.execute();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             TaskError error = errorHandler.handleError(e);
             result = TaskResult.of(null, error);
             System.out.println(e.getMessage());
@@ -100,6 +111,10 @@ public class Task<T> {
         return taskId;
     }
 
+
+    public final String getTaskName() {
+        return taskName;
+    }
 
     @Override
     public String toString() {

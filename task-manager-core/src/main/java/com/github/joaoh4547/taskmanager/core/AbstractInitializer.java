@@ -1,10 +1,11 @@
 package com.github.joaoh4547.taskmanager.core;
 
 
-
 import com.github.joaoh4547.taskmanager.db.DataBaseContext;
+import com.github.joaoh4547.taskmanager.db.JpaManager;
 import com.github.joaoh4547.taskmanager.migration.MigratorManager;
 import com.github.joaoh4547.taskmanager.utils.Bundler;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +29,15 @@ public class AbstractInitializer implements Initializer {
     @Override
     public void onInitialize() {
         initDatabase();
+        initJPA();
         if (isRunMigrations()) {
             new MigratorManager().runMigrations();
         }
+    }
+
+    private void initJPA() {
+        LOG.info("Initializing JPA Manager");
+        JpaManager.getInstance().init();
     }
 
     /**
@@ -40,20 +47,42 @@ public class AbstractInitializer implements Initializer {
      */
     protected void initDatabase() {
         try {
-            HikariDataSource ds = new HikariDataSource();
-            ds.setJdbcUrl(Bundler.getValue("database.url", DATABASE_BUNDLE));
-            ds.setUsername(Bundler.getValue("database.user", DATABASE_BUNDLE));
-            ds.setPassword(Bundler.getValue("database.password", DATABASE_BUNDLE));
-            ds.setMaximumPoolSize(10);
-            ds.setConnectionTimeout(30000);
-            ds.setConnectionTestQuery("SELECT 1 from dual");
-            DataBaseContext.setDataSource(ds);
-            Connection c = ds.getConnection();
-            c.close();
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-        }
 
+
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(Bundler.getValue("database.url", DATABASE_BUNDLE));
+            config.setUsername(Bundler.getValue("database.user", DATABASE_BUNDLE));
+            config.setPassword(Bundler.getValue("database.password", DATABASE_BUNDLE));
+            config.setMaximumPoolSize(30);
+            config.addDataSourceProperty("dataSource.logLevel", "INFO");
+            config.setLeakDetectionThreshold(10000);
+            config.setMinimumIdle(10);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(600000);
+            config.setLeakDetectionThreshold(15000);
+            config.setConnectionTestQuery("SELECT 1 from dual");
+
+            HikariDataSource ds = new HikariDataSource(config);
+
+            DataBaseContext.setDataSource(ds);
+            try (Connection con = ds.getConnection()) {
+                if (con.isValid(2)) { // Testa a conexão por 2 segundos
+                    LOG.info("Database connection established");
+                }
+                else {
+                    LOG.info("Database connection failed");
+                }
+            }
+            catch (Exception e) {
+                ds.close();
+                LOG.error("Database connection failed", e);
+            }
+
+        }
+        catch (Exception e) {
+            LOG.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     /**

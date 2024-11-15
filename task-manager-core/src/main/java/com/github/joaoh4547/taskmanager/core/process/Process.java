@@ -1,7 +1,8 @@
-package com.github.joaoh4547.taskmanager.core.entities;
+package com.github.joaoh4547.taskmanager.core.process;
 
-import com.github.joaoh4547.taskmanager.core.task.Task;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,25 +10,37 @@ import java.util.UUID;
 
 /**
  * Represents a process instance that contains a task, logs, and an id.
- *
- * @param <T> the type of task associated with the process
  */
-public class Process<T> {
+@Entity
+@Table(name = "TM_PROCESS")
+public class Process {
 
     /**
      * Represents the unique identifier of an entity.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /**
-     * Represents a task associated with a process, which can be executed to produce a result or an error.
-     */
-    private Task<T> task;
+
+    @Column(name = "STARTED_TIME", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime startTime;
+
+    @Column(name = "END_TIME", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime endTime;
+
+    @Column(name = "NOM_PROCESS")
+    private String name;
+
+
+    @Column(name = "PROCESS_STATE")
+    private ProcessState state = ProcessState.QUEUED;
 
     /**
      * Represents a synchronized collection of ProcessLog instances associated with a Process.
      */
-    private final Collection<ProcessLog> logs = Collections.synchronizedCollection(new ArrayList<>());
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "process", targetEntity = ProcessLog.class)
+    private Collection<ProcessLog> logs = Collections.synchronizedCollection(new ArrayList<>());
 
     public Process() {
     }
@@ -69,22 +82,36 @@ public class Process<T> {
         this.id = id;
     }
 
-    /**
-     * Retrieves the task associated with a process instance.
-     *
-     * @return the task associated with the process instance
-     */
-    public Task<?> getTask() {
-        return task;
+    public ProcessState getState() {
+        return state;
     }
 
-    /**
-     * Sets the task associated with this process instance.
-     *
-     * @param task the task to set for this process instance
-     */
-    public void setTask(Task<T> task) {
-        this.task = task;
+    public void setState(ProcessState state) {
+        this.state = state;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -93,7 +120,7 @@ public class Process<T> {
      * @param <T> the type of task associated with the process
      * @return a new Process instance
      */
-    public static <T> Process<T> newInstance() {
-        return new Process<>();
+    public static <T> Process newInstance() {
+        return new Process();
     }
 }

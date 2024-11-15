@@ -1,5 +1,9 @@
 package com.github.joaoh4547.taskmanager.core.task;
 
+import com.github.joaoh4547.taskmanager.core.task.event.TaskEvent;
+import com.github.joaoh4547.taskmanager.core.task.event.TaskEventEmitter;
+import com.github.joaoh4547.taskmanager.core.task.event.TaskEventType;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,11 +51,13 @@ public class TaskWorker {
                     SubWorker<?> tarefa = getSubWorker();
                     if (tarefa != null) {
                         tarefa.doWork();
-                    } else {
+                    }
+                    else {
                         // Se não há tarefas, pausamos a execução
                         pausarExecucao();
                     }
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
@@ -72,9 +78,11 @@ public class TaskWorker {
     @SafeVarargs
     public final <T> void addTask(Collection<Task<T>> tasks, TaskExecutionListener<T>... listeners) {
         lock.lock();
+        tasks.forEach(task -> {
+            TaskEventEmitter.getInstance().fireEvent(TaskEvent.createTaskEvent(TaskEventType.CREATED_TASK, task));
+        });
         TaskRegistry<T> registry = createRegistry(tasks, listeners);
         SubWorker<T> worker = new SubWorker<>(registry);
-
         try {
             boolean added = fila.offer(worker);
             if (added) {
@@ -83,7 +91,8 @@ public class TaskWorker {
             if (!executando) {
                 novaTarefaAdicionada.signal();
             }
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
 
@@ -98,9 +107,11 @@ public class TaskWorker {
                 novaTarefaAdicionada.await(); // Pausa até que uma nova tarefa seja adicionada
             }
             executando = true;
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }

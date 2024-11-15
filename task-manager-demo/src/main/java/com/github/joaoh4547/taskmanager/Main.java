@@ -1,6 +1,7 @@
 package com.github.joaoh4547.taskmanager;
 
 import com.github.joaoh4547.taskmanager.core.Application;
+import com.github.joaoh4547.taskmanager.db.JpaManager;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +18,7 @@ public class Main {
             @Override
             public void run() {
                 System.out.println("Hello World!");
+                JpaManager.getInstance();
             }
 
         };

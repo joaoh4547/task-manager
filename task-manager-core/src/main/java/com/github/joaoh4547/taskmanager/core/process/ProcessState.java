@@ -1,4 +1,4 @@
-package com.github.joaoh4547.taskmanager.core.entities;
+package com.github.joaoh4547.taskmanager.core.process;
 
 /**
  * Represents the current state of a process.

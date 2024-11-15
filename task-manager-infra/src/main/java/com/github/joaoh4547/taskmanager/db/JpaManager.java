@@ -8,7 +8,6 @@ import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.OracleDialect;
 import org.hibernate.service.ServiceRegistry;
 
 import java.util.Properties;
@@ -17,9 +16,13 @@ public class JpaManager {
 
     private static JpaManager instance;
 
-    private final EntityManagerFactory entityManagerFactory;
+    private EntityManagerFactory entityManagerFactory;
 
     private JpaManager() {
+    }
+
+
+    public void init() {
         this.entityManagerFactory = create();
     }
 
@@ -27,11 +30,11 @@ public class JpaManager {
         Configuration hibernateConfiguration = new Configuration();
         Properties properties = new Properties();
         properties.put(AvailableSettings.JAKARTA_NON_JTA_DATASOURCE, DatabaseManager.getDataSource());
-        properties.put(AvailableSettings.DIALECT, OracleDialect.class.getName());
         properties.put(AvailableSettings.HBM2DDL_AUTO, "update");
         properties.put(AvailableSettings.SHOW_SQL, "true");
         properties.put(AvailableSettings.FORMAT_SQL, "true");
         properties.put(AvailableSettings.HIGHLIGHT_SQL, "true");
+        properties.put(AvailableSettings.JTA_PLATFORM, "JTA");
         hibernateConfiguration.setProperties(properties);
 
         for (Class<?> clazz :
@@ -54,6 +57,9 @@ public class JpaManager {
     }
 
     public EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
+            init();
+        }
         return entityManagerFactory;
     }
 

@@ -18,7 +18,8 @@ public class ReflectionUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ReflectionUtils.class);
 
 
-    private static final Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forJavaClassPath()));
+    private static final Reflections reflections =
+            new Reflections(new ConfigurationBuilder().setUrls(ClasspathHelper.forJavaClassPath()));
 
 
     @SafeVarargs
@@ -42,7 +43,8 @@ public class ReflectionUtils {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("Error creating instance of {}", clazz.getName(), e);
             throw new RuntimeException(e);
         }
@@ -51,7 +53,8 @@ public class ReflectionUtils {
     public static <T> T newInstanceWithArgs(Class<T> clazz, Object... args) {
         try {
             return clazz.getDeclaredConstructor(args.getClass()).newInstance(args);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("Error creating instance of {} with args {}", clazz.getName(), args, e);
             throw new RuntimeException(e);
         }
@@ -64,7 +67,8 @@ public class ReflectionUtils {
     public static Method getDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         try {
             return clazz.getDeclaredMethod(methodName, parameterTypes);
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e) {
             LOG.error("No method {} found in {}", methodName, clazz.getName(), e);
             return null;
         }
@@ -73,7 +77,8 @@ public class ReflectionUtils {
     public static Object invokeMethod(Object obj, Method method, Object... args) {
         try {
             return method.invoke(obj, args);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("Error invoking method {} on object {}", method.getName(), obj, e);
             throw new RuntimeException(e);
         }
@@ -89,6 +94,10 @@ public class ReflectionUtils {
             classes.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
         }
         return classes;
+    }
+
+    public static void test() {
+//        Resources.getResource("")
     }
 
 

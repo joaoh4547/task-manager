@@ -3,10 +3,12 @@ package com.github.joaoh4547.taskmanager.migration;
 
 import com.github.joaoh4547.taskmanager.db.DatabaseManager;
 import com.github.joaoh4547.taskmanager.utils.ReflectionUtils;
+import io.github.classgraph.ClassGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Objects;
+import java.util.Enumeration;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +37,8 @@ public class MigratorManager {
     public static final String MIGRATION_TABLE = Migrator.MIGRATION_TABLE;
 
     /**
-     * This method is used to run any pending database migrations. It checks if the migration table exists in the database,
+     * This method is used to run any pending database migrations. It checks if the migration table exists in the
+     * database,
      * and if it does not, it creates the migration table. It utilizes DatabaseContext to get the database connection.
      *
      * @throws MigrationException if any exception occurs during the migration process
@@ -50,13 +53,36 @@ public class MigratorManager {
             Collection<Migrator> migrators = new ArrayList<>();
 
             Collection<File> files = new ArrayList<>();
-            Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("scripts")).toURI());
-            try (Stream<Path> paths = Files.walk(path, 1)) {
-                paths.filter(Files::isRegularFile)
-                        .forEach(filePath -> {
-                            files.add(filePath.toFile());
-                        });
+            Collection<URL> urls;
+            Enumeration<URL> urlEnumeration = Thread.currentThread().getContextClassLoader().getResources("scripts");
+
+//            urlEnumeration.nextElement()
+//            if (urlEnumeration.nextElement() != null) {
+//                urls.add(urlEnumeration.nextElement());
+//            }
+
+            try (var scan = new ClassGraph().acceptPaths("scripts").scan()) {
+                var resources = scan.getAllResources();
+                urls = new ArrayList<>(resources.getURLs());
             }
+            for (var url : urls) {
+                Path path = Paths.get(url.toURI());
+                try (Stream<Path> paths = Files.walk(path, 1)) {
+                    paths.filter(Files::isRegularFile)
+                            .forEach(filePath -> {
+                                files.add(filePath.toFile());
+                            });
+                }
+            }
+
+
+//            Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("scripts")).toURI());
+//            try (Stream<Path> paths = Files.walk(path, 1)) {
+//                paths.filter(Files::isRegularFile)
+//                        .forEach(filePath -> {
+//                            files.add(filePath.toFile());
+//                        });
+//            }
 
 
             for (File file : files) {
@@ -74,7 +100,8 @@ public class MigratorManager {
                     .toList();
 
 
-            LOG.info("Migrations to migrate [{}]", String.join(", ", fitered.stream().map(Migrator::toString).toList()));
+            LOG.info("Migrations to migrate [{}]",
+                     String.join(", ", fitered.stream().map(Migrator::toString).toList()));
 
 
             boolean successMigrate = true;
@@ -89,7 +116,8 @@ public class MigratorManager {
             if (successMigrate) {
                 LOG.info("Migrations completed");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new MigrationException(e.getMessage(), e);
         }
     }
@@ -102,14 +130,14 @@ public class MigratorManager {
      */
     private void createMigrationTable(Connection connection) throws SQLException {
         String sql = """
-                create table TM_MIGRATION(
-                    MIGRATION_ID NUMBER GENERATED as identity,
-                    MIGRATION_NAME VARCHAR2(500) not null,
-                    MIGRATION_STATUS NUMBER(1) not null,
-                    MIGRATION_CREATED_AT DATE default sysdate,
-                    MIGRATION_UPDATED_AT DATE default sysdate,
-                    CONSTRAINT PK_TM_MIGRATION PRIMARY KEY(MIGRATION_ID)\s
-                )""";
+                     create table TM_MIGRATION(
+                         MIGRATION_ID NUMBER GENERATED as identity,
+                         MIGRATION_NAME VARCHAR2(500) not null,
+                         MIGRATION_STATUS NUMBER(1) not null,
+                         MIGRATION_CREATED_AT DATE default sysdate,
+                         MIGRATION_UPDATED_AT DATE default sysdate,
+                         CONSTRAINT PK_TM_MIGRATION PRIMARY KEY(MIGRATION_ID)\s
+                     )""";
         connection.prepareStatement(sql).execute();
     }
 

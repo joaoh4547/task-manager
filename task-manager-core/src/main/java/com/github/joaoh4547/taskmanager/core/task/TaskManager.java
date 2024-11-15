@@ -1,9 +1,12 @@
 package com.github.joaoh4547.taskmanager.core.task;
 
+import com.github.joaoh4547.taskmanager.core.process.LogType;
+import com.github.joaoh4547.taskmanager.core.process.Process;
+import com.github.joaoh4547.taskmanager.core.process.ProcessDAO;
 import com.github.joaoh4547.taskmanager.core.task.event.TaskEventListener;
-import com.github.joaoh4547.taskmanager.core.task.event.TaskEventType;
-
 import com.github.joaoh4547.taskmanager.core.task.event.TaskEventListenerStore;
+import com.github.joaoh4547.taskmanager.core.task.event.TaskEventType;
+import com.github.joaoh4547.taskmanager.core.task.log.TaskLogger;
 import com.github.joaoh4547.taskmanager.utils.Bundler;
 
 import java.util.*;
@@ -23,8 +26,16 @@ public class TaskManager {
     }
 
 
-
     private static void configListeners() {
+
+        addListeners(event -> {
+            Task<?> task = event.task();
+            Process p = task.getProcess();
+            ProcessDAO.getInstance().save(p);
+            TaskLogger.getInstance(task).log(LogType.INFO,
+                                             String.format("Created Process of task %s", task.getTaskId()));
+        }, TaskEventType.QUEUED);
+
         addListeners(event -> {
 
         }, TaskEventType.QUEUED);
@@ -44,7 +55,8 @@ public class TaskManager {
 
     private static void registerListeners() {
         listeners.forEach((type, taskEventListeners) -> {
-            taskEventListeners.forEach(listener -> TaskEventListenerStore.getInstance().addTaskEventListener(type, listener));
+            taskEventListeners.forEach(listener -> TaskEventListenerStore.getInstance().addTaskEventListener(type,
+                                                                                                             listener));
         });
     }
 
@@ -84,7 +96,8 @@ public class TaskManager {
         if (taskWorkers == null || taskWorkers.isEmpty()) {
             throw new IllegalStateException(getNoWorkersFoundMessage(context));
         }
-        Optional<TaskWorker> workerOptional = taskWorkers.stream().min(Comparator.comparingInt(TaskWorker::getTaskCount));
+        Optional<TaskWorker> workerOptional =
+                taskWorkers.stream().min(Comparator.comparingInt(TaskWorker::getTaskCount));
         return workerOptional.orElseThrow(() -> new IllegalStateException(getNoWorkersFoundMessage(context)));
     }
 

@@ -15,32 +15,32 @@ import jakarta.persistence.EntityTransaction;
 public abstract class AbstractRepository<T, R> implements Repository<T, R> {
 
 
-    private final Class<T> entityClass;
+    private final Class<? extends T> entityClass;
 
     private EntityManagerFactory getEntityManagerFactory() {
         return JpaManager.getInstance().getEntityManagerFactory();
     }
 
-    private EntityManager getEntityManager() {
+    private synchronized EntityManager getEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }
 
-    protected AbstractRepository(Class<T> entityClass) {
+    protected AbstractRepository(Class<? extends T> entityClass) {
         this.entityClass = entityClass;
     }
 
-    private Class<T> getEntityClass() {
+    private Class<? extends T> getEntityClass() {
         return this.entityClass;
     }
 
     @Override
-    public T find(R key) {
+    public synchronized T find(R key) {
         EntityManager em = getEntityManager();
         return em.find(entityClass, key);
     }
 
     @Override
-    public void save(T entity) {
+    public synchronized void save(T entity) {
         try (EntityManager em = getEntityManager()) {
             EntityTransaction t = em.getTransaction();
             t.begin();
@@ -50,7 +50,7 @@ public abstract class AbstractRepository<T, R> implements Repository<T, R> {
     }
 
     @Override
-    public void deleteByKey(R key) {
+    public synchronized void deleteByKey(R key) {
         EntityManager em = getEntityManager();
         T entity = em.find(entityClass, key);
         if (entity != null) {
@@ -62,7 +62,7 @@ public abstract class AbstractRepository<T, R> implements Repository<T, R> {
     }
 
     @Override
-    public void delete(T entity) {
+    public synchronized void delete(T entity) {
         EntityManager em = getEntityManager();
         if (!em.contains(entity)) {
             entity = em.merge(entity);
@@ -74,7 +74,7 @@ public abstract class AbstractRepository<T, R> implements Repository<T, R> {
     }
 
     @Override
-    public boolean exists(R key) {
+    public synchronized boolean exists(R key) {
         EntityManager em = getEntityManager();
         T entity = em.find(entityClass, key);
         return entity != null;

@@ -5,6 +5,8 @@ import java.sql.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.joaoh4547.taskmanager.core.config.CacheConfigurator;
+import com.github.joaoh4547.taskmanager.core.config.DistributedCacheConfig;
 import com.github.joaoh4547.taskmanager.db.DataBaseContext;
 import com.github.joaoh4547.taskmanager.db.JpaManager;
 import com.github.joaoh4547.taskmanager.migration.MigratorManager;
@@ -30,11 +32,59 @@ public class AbstractInitializer
 
   @Override
   public void onInitialize() {
+    initCache();
     initDatabase();
     initJPA();
     if (isRunMigrations()) {
       new MigratorManager().runMigrations();
     }
+  }
+
+  /**
+   * Initializes the cache by creating a cache configurator, applying the
+   * configuration, and then initializing the cache manager.
+   * <p>
+   * This method performs the following steps: - Creates an instance of
+   * `CacheConfigurator` using `createCacheConfigurator()`. - Configures the
+   * cache with `createCacheConfig()` using the `configure()` method of
+   * `CacheConfigurator`. - Initializes the cache manager using the `init()`
+   * method of `CacheConfigurator`.
+   * </p>
+   */
+  void initCache() {
+    var config = createCacheConfigurator();
+    config.configure(createCacheConfig());
+    config.init();
+  }
+
+  /**
+   * Creates and returns an instance of CacheConfigurator.
+   *
+   * @return a new instance of CacheConfigurator to configure and initialize the
+   *         caching mechanism.
+   */
+  private CacheConfigurator createCacheConfigurator() {
+    return new CacheConfigurator();
+  }
+
+  /**
+   * Creates and returns a DistributedCacheConfig with predefined settings.
+   *
+   * @return a DistributedCacheConfig object initialized with default host
+   *         "localhost" on port 9510, and the cache name retrieved from
+   *         getCacheName().
+   */
+  protected DistributedCacheConfig createCacheConfig() {
+    return new DistributedCacheConfig("localhost", 9510, getCacheName());
+  }
+
+  /**
+   * Retrieves the name of the cache to be used.
+   *
+   * @return the name of the cache, which is "task-manager"
+   */
+  protected String getCacheName() {
+    return "task-manager";
   }
 
   private void initJPA() {

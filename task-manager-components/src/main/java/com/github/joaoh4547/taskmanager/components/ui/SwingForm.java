@@ -14,17 +14,17 @@ public class SwingForm<T>
     super(object, new JPanel());
   }
 
-  @Override
-  protected void add(Component... components) {
-    Arrays.asList(components).forEach(this::add);
-  }
+//  @Override
+//  protected void add(Component... components) {
+//    Arrays.asList(components).forEach(this::add);
+//  }
 
-  @Override
-  protected void remove(Component... components) {
-    Arrays.asList(components).forEach(c -> {
-      getContainer().remove(c);
-    });
-  }
+//  @Override
+//  protected void remove(Component... components) {
+//    Arrays.asList(components).forEach(c -> {
+//      getContainer().remove(c);
+//    });
+//  }
 
   @Override
   protected void clear() {

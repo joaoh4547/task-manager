@@ -1,10 +1,9 @@
 package com.github.joaoh4547.taskmanager.utils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.reflections.Reflections;
@@ -43,6 +42,15 @@ public class ReflectionUtils {
       LOG.error("Error creating instance of {}", clazz.getName(), e);
       throw new RuntimeException(e);
     }
+  }
+  
+  public static <T extends Annotation> Field getFieldWithAnnotation(Class<?> clazz, Class<T> annotation) {
+    for (Field field : clazz.getDeclaredFields()) {
+      if (field.isAnnotationPresent(annotation)) {
+        return field;
+      }
+    }
+    return null;
   }
 
   public static <T> T newInstanceWithArgs(Class<T> clazz, Object... args) {
@@ -95,4 +103,19 @@ public class ReflectionUtils {
     return classes;
   }
 
+  @SuppressWarnings("unchecked")
+  public static <T, R> Class<R> getGenericParamAt(Class<T> aClass,
+                                                  int index) {
+    Collection<Type> types = getTypesOfClass(aClass);
+
+    if (types.size() <= index) {
+      throw new RuntimeException("No generic param at index " + index);
+    }
+    return (Class<R>) types.toArray()[index];
+  }
+
+  private static <T> Collection<Type> getTypesOfClass(Class<T> aClass) {
+    return Arrays.asList(((ParameterizedType) aClass.getGenericSuperclass())
+        .getActualTypeArguments());
+  }
 }

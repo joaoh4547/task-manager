@@ -12,8 +12,8 @@
     <artifactId>task-manager-data</artifactId>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -32,6 +32,11 @@
             <groupId>com.github.squigglesql</groupId>
             <artifactId>squigglesql</artifactId>
             <version>4.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.joaoh4547.taskmanager</groupId>
+            <artifactId>task-manager-cache</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

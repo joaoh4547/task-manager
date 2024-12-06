@@ -12,7 +12,7 @@
     <artifactId>task-manager-cache</artifactId>
     <properties>
         <ehcache.version>3.10.8</ehcache.version>
-        <jedis.version>5.0.2</jedis.version>
+        <jedis.version>5.2.0</jedis.version>
     </properties>
 
     <dependencies>

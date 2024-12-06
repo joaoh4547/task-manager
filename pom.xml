@@ -42,7 +42,7 @@
         <aspectj-maven-plugin.version>1.15.0</aspectj-maven-plugin.version>
         <java.version>21</java.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-        <jaxb.version>3.0.1</jaxb.version>
+        <jaxb.version>4.0.2</jaxb.version>
     </properties>
 
     <dependencies>

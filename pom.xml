@@ -30,7 +30,7 @@
         <classgraph.version>4.8.179</classgraph.version>
         <guava.version>33.4.0-jre</guava.version>
         <jboss-logging.version>3.6.1.Final</jboss-logging.version>
-        <commons-collections4.version>4.5.0-M2</commons-collections4.version>
+        <commons-collections4.version>4.5.0-M3</commons-collections4.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-email.version>1.6.0</commons-email.version>
         <ojdbc11.version>23.6.0.24.10</ojdbc11.version>

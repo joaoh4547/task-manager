@@ -35,7 +35,7 @@
         <commons-email.version>1.6.0</commons-email.version>
         <ojdbc11.version>23.7.0.25.01</ojdbc11.version>
         <HikariCP.version>6.2.1</HikariCP.version>
-        <logback-classic.version>1.5.17</logback-classic.version>
+        <logback-classic.version>1.5.18</logback-classic.version>
         <commons-beanutils.version>20030211.134440</commons-beanutils.version>
         <junit.version>5.12.0</junit.version>
         <aspectj.version>1.9.23</aspectj.version>

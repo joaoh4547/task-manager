@@ -37,7 +37,7 @@
         <HikariCP.version>6.3.0</HikariCP.version>
         <logback-classic.version>1.5.18</logback-classic.version>
         <commons-beanutils.version>20030211.134440</commons-beanutils.version>
-        <junit.version>5.12.1</junit.version>
+        <junit.version>5.12.2</junit.version>
         <aspectj.version>1.9.23</aspectj.version>
         <aspectj-maven-plugin.version>1.15.0</aspectj-maven-plugin.version>
         <java.version>21</java.version>

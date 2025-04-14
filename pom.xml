@@ -28,7 +28,7 @@
         <hibernate-core.version>7.0.0.Beta5</hibernate-core.version>
         <hibernate-validator.version>9.0.0.CR1</hibernate-validator.version>
         <classgraph.version>4.8.179</classgraph.version>
-        <guava.version>33.4.6-jre</guava.version>
+        <guava.version>33.4.8-jre</guava.version>
         <jboss-logging.version>3.6.1.Final</jboss-logging.version>
         <commons-collections4.version>4.5.0-M3</commons-collections4.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>

@@ -25,7 +25,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reflections.version>0.10.2</reflections.version>
-        <hibernate-core.version>7.0.0.Beta5</hibernate-core.version>
+        <hibernate-core.version>7.1.0.CR1</hibernate-core.version>
         <hibernate-validator.version>9.0.0.CR1</hibernate-validator.version>
         <classgraph.version>4.8.179</classgraph.version>
         <guava.version>33.4.6-jre</guava.version>
